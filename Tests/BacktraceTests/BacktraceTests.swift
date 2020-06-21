@@ -20,13 +20,9 @@ func d<T>(_ x: T) {
         "BacktraceTests.BacktraceTests.testBacktrace() -> ()"
     ]
     
-    backtrace(options: .default).forEach {
-        print($0)
-    }
-    
-    let functions = backtrace(options: .default)
+    let functions = backtrace()
         .map {
-            $0.function
+            $0.resolvedFunction(options: .default)
         }
     for (a, b) in zip(functions, results) {
         XCTAssertEqual(a, b)

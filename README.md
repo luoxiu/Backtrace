@@ -11,7 +11,7 @@ let callstack = backtrace()
 ### before
 
 ```swift
-// Thread.callStackSymbols -> [String]
+// Thread.callStackSymbols.forEach { $0 }
 
 0   BacktraceTests                      0x00000001023bcd8a $s14BacktraceTests1ayyxlF + 282
 1   BacktraceTests                      0x00000001023bd148 $s14BacktraceTests1byySiF + 40
@@ -24,12 +24,12 @@ let callstack = backtrace()
 ### after
 
 ```swift
-// backtrace(options: .default) -> [StackFrame]
+backtrace().forEach { $0.resolvedFunction(options: .default) }
 
-StackFrame(module: "BacktraceTests", function: "BacktraceTests.d<A>(A) -> ()")
-StackFrame(module: "BacktraceTests", function: "BacktraceTests.c(Swift.Int) -> ()")
-StackFrame(module: "BacktraceTests", function: "BacktraceTests.b((Swift.Int) -> ()) -> ()")
-StackFrame(module: "BacktraceTests", function: "BacktraceTests.a() -> ()")
-StackFrame(module: "BacktraceTests", function: "BacktraceTests.BacktraceTests.testBacktrace() -> ()")
-StackFrame(module: "BacktraceTests", function: "@objc BacktraceTests.BacktraceTests.testBacktrace() -> ()")
+BacktraceTests.d<A>(A) -> ()
+BacktraceTests.c(Swift.Int) -> ()
+BacktraceTests.b((Swift.Int) -> ()) -> ()
+BacktraceTests.a() -> ()
+BacktraceTests.BacktraceTests.testBacktrace() -> ()
+@objc BacktraceTests.BacktraceTests.testBacktrace() -> ()
 ```
