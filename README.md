@@ -24,7 +24,7 @@ let callstack = backtrace()
 ### after
 
 ```swift
-backtrace().forEach { $0.resolvedFunction(options: .default) }
+// backtrace().forEach { $0.resolvedFunction(options: .default) }
 
 BacktraceTests.d<A>(A) -> ()
 BacktraceTests.c(Swift.Int) -> ()
