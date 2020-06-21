@@ -17,11 +17,19 @@ func d<T>(_ x: T) {
         "BacktraceTests.c(Swift.Int) -> ()",
         "BacktraceTests.b((Swift.Int) -> ()) -> ()",
         "BacktraceTests.a() -> ()",
-        "BacktraceTests.BacktraceTests.testBacktrace()"
+        "BacktraceTests.BacktraceTests.testBacktrace() -> ()"
     ]
-
-    for (a, b) in zip(backtrace(options: .default).map { $0.function }, results) {
-        XCTAssertTrue(a.contains(b))
+    
+    backtrace(options: .default).forEach {
+        print($0)
+    }
+    
+    let functions = backtrace(options: .default)
+        .map {
+            $0.function
+        }
+    for (a, b) in zip(functions, results) {
+        XCTAssertEqual(a, b)
     }
 }
 

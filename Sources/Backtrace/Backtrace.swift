@@ -5,17 +5,23 @@ struct CallStackSymbol {
     
     let symbol: String
     
-    func demangle(options: SymbolPrintOptions) -> StackFrame {
+    func parse(options: SymbolPrintOptions) -> StackFrame {
         let components = symbol.split(separator: " ")
         
-        precondition(components.count > 3, "Bad symbol format: \(symbol)")
-        
-        let mangled = String(components[3])
-        let demangled = try? parseMangledSwiftSymbol(mangled)
+        // 0   BacktraceTests                      0x00000001080024a9 {x} + 505
+        precondition(components.count > 5, "Bad symbol format: \(symbol)")
         
         let module = String(components[1])
-        let function = demangled?.print(using: options) ?? mangled
-
+        
+        var function: String
+        
+        let mangled = String(components[3])
+        if let demangled = try? parseMangledSwiftSymbol(mangled).print(using: options) {
+            function = demangled
+        } else {
+            function = components.dropFirst(3).dropLast(2).joined(separator: " ")
+        }
+        
         return StackFrame(module: module, function: function)
     }
 }
@@ -27,10 +33,10 @@ public struct StackFrame {
     public let function: String
 }
 
-public func backtrace(options: SymbolPrintOptions = .simplified) -> [StackFrame] {
+public func backtrace(options: SymbolPrintOptions = .default) -> [StackFrame] {
     Thread.callStackSymbols
         .dropFirst()
         .compactMap {
-            CallStackSymbol(symbol: $0).demangle(options: options)
+            CallStackSymbol(symbol: $0).parse(options: options)
         }
 }
