@@ -26,11 +26,16 @@ struct CallStackSymbol {
     }
 }
 
-public struct StackFrame {
+public struct StackFrame: Codable {
     
     public let module: String
     
     public let function: String
+    
+    public init(module: String, function: String) {
+        self.module = module
+        self.function = function
+    }
 }
 
 public func backtrace(options: SymbolPrintOptions = .default) -> [StackFrame] {
