@@ -19,7 +19,8 @@ func d<T>(_ x: T) {
         "BacktraceTests.a() -> ()",
         "BacktraceTests.BacktraceTests.testBacktrace()"
     ]
-    for (a, b) in zip(backtrace(options: .default), results) {
+
+    for (a, b) in zip(backtrace(options: .default).map { $0.function }, results) {
         XCTAssertTrue(a.contains(b))
     }
 }

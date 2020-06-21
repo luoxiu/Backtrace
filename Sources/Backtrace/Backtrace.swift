@@ -1,22 +1,36 @@
 import Foundation
-import CwlDemangle
+@_exported import CwlDemangle
 
-public func backtrace(options: SymbolPrintOptions = .simplified) -> [String] {
+struct CallStackSymbol {
+    
+    let symbol: String
+    
+    func demangle(options: SymbolPrintOptions) -> StackFrame {
+        let components = symbol.split(separator: " ")
+        
+        precondition(components.count > 3, "Bad symbol format: \(symbol)")
+        
+        let mangled = String(components[3])
+        let demangled = try? parseMangledSwiftSymbol(mangled)
+        
+        let module = String(components[1])
+        let function = demangled?.print(using: options) ?? mangled
+
+        return StackFrame(module: module, function: function)
+    }
+}
+
+public struct StackFrame {
+    
+    public let module: String
+    
+    public let function: String
+}
+
+public func backtrace(options: SymbolPrintOptions = .simplified) -> [StackFrame] {
     Thread.callStackSymbols
         .dropFirst()
-        .map {
-            let components = $0.split(separator: " ")
-            guard components.count > 3 else { return $0 }
-            
-            let mangled = String(components[3])
-            
-            guard let parsed = try? parseMangledSwiftSymbol(mangled) else {
-                return $0
-            }
-            
-            return $0.replacingOccurrences(
-                of: mangled,
-                with: parsed.print(using: options)
-            )
+        .compactMap {
+            CallStackSymbol(symbol: $0).demangle(options: options)
         }
 }
