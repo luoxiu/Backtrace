@@ -22,7 +22,7 @@ func d<T>(_ x: T) {
     
     let functions = backtrace()
         .map {
-            $0.resolvedFunction(options: .default)
+            $0.resolvedFunctionName(using: .default)
         }
     for (a, b) in zip(functions, results) {
         XCTAssertEqual(a, b)
