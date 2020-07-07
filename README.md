@@ -11,7 +11,7 @@ let callstack = backtrace()
 ### before
 
 ```swift
-// Thread.callStackSymbols.forEach { $0 }
+// Thread.callStackSymbols.map { $0 }
 
 0   BacktraceTests                      0x00000001023bcd8a $s14BacktraceTests1ayyxlF + 282
 1   BacktraceTests                      0x00000001023bd148 $s14BacktraceTests1byySiF + 40
@@ -24,7 +24,7 @@ let callstack = backtrace()
 ### after
 
 ```swift
-// backtrace().forEach { $0.resolvedFunction(options: .default) }
+// backtrace().map { $0.resolvedFunction(options: .default) }
 
 BacktraceTests.d<A>(A) -> ()
 BacktraceTests.c(Swift.Int) -> ()
