@@ -1,7 +1,7 @@
 import Foundation
 @_exported import CwlDemangle
 
-public struct StackFrame: Codable {
+public struct StackFrame {
     
     public let module: String
     
