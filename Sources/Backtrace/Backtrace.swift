@@ -7,7 +7,7 @@ public struct StackFrame {
     
     public let functionName: String
     
-    init(moduleName: String, functionName: String) {
+    public init(moduleName: String, functionName: String) {
         self.moduleName = moduleName
         self.functionName = functionName
     }
