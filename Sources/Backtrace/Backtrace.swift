@@ -3,12 +3,12 @@ import Foundation
 
 public struct StackFrame {
     
-    public let moduleName: String
+    public let symbol: String
     
     public let functionName: String
     
-    public init(moduleName: String, functionName: String) {
-        self.moduleName = moduleName
+    public init(symbol: String, functionName: String) {
+        self.symbol = symbol
         self.functionName = functionName
     }
     
@@ -27,29 +27,27 @@ public struct StackFrame {
         }
         return functionName
     }
+    
+    public func symbolWithResolvedFunctionName(using options: SymbolPrintOptions) -> String {
+        symbol.replacingOccurrences(of: functionName, with: resolvedFunctionName(using: options))
+    }
 }
 
 public func backtrace() -> [StackFrame] {
     Thread.callStackSymbols
         .dropFirst()
         .map { symbol in
+            // 0   BacktraceTests                      0x00000001080024a9 {x} + 505
+            
             let components = symbol.split(separator: " ")
             
-            // 0   BacktraceTests                      0x00000001080024a9 {x} + 505
-            assert(components.count > 5, "Bad mangled swift symbol format: \(symbol)")
-            
-            let unknown = "unknown"
-            
-            if components.count < 2 {
-                return StackFrame(moduleName: unknown, functionName: unknown)
-            }
-            let moduleName = String(components[1])
-            
             if components.count < 6 {
-                return StackFrame(moduleName: moduleName, functionName: unknown)
+                assertionFailure("Bad mangled swift symbol format: \(symbol)")
+                return StackFrame(symbol: symbol, functionName: "unknown")
             }
+            
             let functionName = components.dropFirst(3).dropLast(2).joined(separator: " ")
             
-            return StackFrame(moduleName: moduleName, functionName: functionName)
+            return StackFrame(symbol: symbol, functionName: functionName)
         }
 }
